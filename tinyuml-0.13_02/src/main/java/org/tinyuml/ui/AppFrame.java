@@ -39,6 +39,7 @@ import java.util.TimerTask;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -58,6 +59,7 @@ import org.tinyuml.ui.commands.ModelWriter;
 import org.tinyuml.ui.commands.PngExporter;
 import org.tinyuml.ui.commands.SvgExporter;
 import org.tinyuml.ui.diagram.DiagramEditor;
+import org.tinyuml.ui.diagram.DiagramItemCounter;
 import org.tinyuml.ui.diagram.EditorMouseEvent;
 import org.tinyuml.ui.diagram.EditorStateListener;
 import org.tinyuml.ui.diagram.SelectionListener;
@@ -80,6 +82,7 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
   private JTabbedPane tabbedPane;
   private JLabel coordLabel = new JLabel("    ");
   private JLabel memLabel = new JLabel("    ");
+  private JLabel itemsLabel = new JLabel("    ");
   private UmlModel umlModel;
   private DiagramEditor currentEditor;
   private transient Timer timer = new Timer();
@@ -87,6 +90,7 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
   private transient EditorCommandDispatcher editorDispatcher;
   private transient MainToolbarManager toolbarmanager;
   private transient MenuManager menumanager;
+  private transient DiagramItemCounter itemCounter;
   private transient File currentFile;
   private LinkedList<DiagramEditor> diagramEditors;
   private Collection<DiagramElement> lastCopiedElements;
@@ -108,6 +112,7 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
     editorDispatcher = null;
     toolbarmanager = null;
     menumanager = null;
+    itemCounter = null;
     currentFile = null;
     initSelectorMap();
   }
@@ -192,6 +197,9 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
    */
   private void createEditor(StructureDiagram diagram) {
     currentEditor = new DiagramEditor(this, diagram);
+    itemCounter = new DiagramItemCounter(currentEditor);
+    // register counter first so it updates counts before AppFrame refreshes UI
+    currentEditor.addEditorStateListener(itemCounter);
     currentEditor.addEditorStateListener(this);
     currentEditor.addSelectionListener(this);
     currentEditor.addAppCommandListener(editorDispatcher);
@@ -213,6 +221,7 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
                               label.getText());
       }
     });
+    updateItemsLabel();
   }
 
   /**
@@ -240,7 +249,15 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
    */
   private void installStatusbar() {
     JPanel statusbar = new JPanel(new BorderLayout());
+    // align and pad the labels so the center label appears truly centered
+    coordLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    coordLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,4,0,8));
+    itemsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    itemsLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,8,0,8));
+    memLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+    memLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,8,0,4));
     statusbar.add(coordLabel, BorderLayout.WEST);
+    statusbar.add(itemsLabel, BorderLayout.CENTER);
     statusbar.add(memLabel, BorderLayout.EAST);
     getContentPane().add(statusbar, BorderLayout.SOUTH);
   }
@@ -274,6 +291,7 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
    * {@inheritDoc}
    */
   public void stateChanged(DiagramEditor editor) {
+    updateItemsLabel();
     updateMenuAndToolbars(editor);
   }
 
@@ -283,6 +301,7 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
   public void elementAdded(DiagramEditor editor) {
     // spring loading is implemented here
     staticToolbarManager.doClick("SELECT_MODE");
+    updateItemsLabel();
     updateMenuAndToolbars(editor);
   }
 
@@ -290,8 +309,22 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
    * {@inheritDoc}
    */
   public void elementRemoved(DiagramEditor editor) {
+    updateItemsLabel();
     updateMenuAndToolbars(editor);
   }
+
+  /**
+   * Updates the status bar item counter.
+   */
+  private void updateItemsLabel() {
+    if (itemCounter != null) {
+      itemsLabel.setText(itemCounter.getLabelText());
+      itemsLabel.revalidate();
+      itemsLabel.repaint();
+    }
+  }
+
+
 
   /**
    * Query the specified editor state and set the menu and the toolbars
@@ -314,7 +347,7 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
    */
   public void selectionStateChanged() {
     boolean hasSelection = getCurrentEditor().getSelectedElements().size() > 0;
-   
+
     menumanager.enableMenuItem("CUT", hasSelection);
     menumanager.enableMenuItem("COPY", hasSelection);
      
@@ -629,7 +662,7 @@ implements EditorStateListener, AppCommandListener, SelectionListener {
 	  if(hasSelection)
 	    lastCopiedElements = getCurrentEditor().getSelectedElements();
 
-	  //adicionalmente, hay que habilitar el botón PASTE!
+	  //adicionalmente, hay que habilitar el botï¿½n PASTE!
 	  menumanager.enableMenuItem("PASTE", hasSelection);
 	  toolbarmanager.enableButton("PASTE", hasSelection);
   }

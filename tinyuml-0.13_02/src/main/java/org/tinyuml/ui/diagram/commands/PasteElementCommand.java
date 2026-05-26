@@ -5,7 +5,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *
+ * @link https://github.com/anachronic/TinyUML
  * TinyUML is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -30,7 +30,7 @@ import org.tinyuml.util.Command;
 /**
  * A command class to paste elements to a diagram.
  *
- * @author Nicolás Salas V.
+ * @author Nicolas Salas V.
  * @version 1.0
  * @link https://github.com/anachronic/TinyUML
  */

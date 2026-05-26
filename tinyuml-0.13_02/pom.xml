@@ -117,6 +117,9 @@
 	      <groupId>org.codehaus.mojo</groupId>
 	      <artifactId>exec-maven-plugin</artifactId>
 	      <version>1.1.1</version>
+        <configuration>
+          <mainClass>org.tinyuml.Main</mainClass>
+        </configuration>
 	      <executions>
 		      <execution>
 			      <phase>verify</phase>

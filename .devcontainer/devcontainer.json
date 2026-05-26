@@ -1,0 +1,9 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/java:8",
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {
+      "password": "vncpassword"
+    }
+  },
+  "forwardPorts": [6080]
+}

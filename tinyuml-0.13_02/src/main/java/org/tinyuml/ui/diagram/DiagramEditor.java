@@ -265,15 +265,15 @@ DiagramEditorNotification, DiagramOperations, NodeChangeListener {
 		DiagramElement copia = (DiagramElement)elem.clone();
 		
 		// le cambiamos el parent al objeto clonado para poder ponerlo
-		// en este diagrama, pues puede venir de otro diagrama!
+    // In this diagram, because it may come from another diagram!
 		copia.setParent(getDiagram());
 		
 		clonedElements.put(elem, copia);
 	}
 	
-	// hasta aquí tengo el hash de cada objeto con su clon (del nuevo diagrama)
-	// ahora debo iterar por cada Connection en elements y rehacer sus conexiones
-	// tomaré el ejemplo desde PasteElementCommand.
+  // At this point we have the hash for each object and its clone (from the new diagram)
+  // now we must iterate over each Connection in elements and rebuild its links
+  // taking the example from PasteElementCommand.
 	for(DiagramElement elem : elements){
 		if(elem instanceof Connection){
 			Connection currentConnection = (Connection)elem;

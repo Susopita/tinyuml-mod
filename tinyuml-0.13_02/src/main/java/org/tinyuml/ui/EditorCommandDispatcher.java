@@ -120,6 +120,8 @@ public class EditorCommandDispatcher implements AppCommandListener {
         RelationType.class), RelationType.INTERFACE_REALIZATION));
       selectorMap.put("RESET_POINTS", new MethodCall(
         DiagramEditor.class.getMethod("resetConnectionPoints")));
+      selectorMap.put("DELETE", new MethodCall(
+        DiagramEditor.class.getMethod("deleteSelection")));
       selectorMap.put("RECT_TO_DIRECT", new MethodCall(
         DiagramEditor.class.getMethod("rectilinearToDirect")));
       selectorMap.put("DIRECT_TO_RECT", new MethodCall(
